@@ -1,12 +1,12 @@
 
 
 "use client"
-import lottery from "@/utils/lottery";
-import web3 from "@/utils/web3";
+import useLottery from "@/hooks/useLottery";
+import { abi, address } from "@/utils/lottery";
 import { FormEvent, useEffect, useState } from "react";
 
 export default function Home() {
-
+  const { web3, contract } = useLottery()
   const [manager, setManager] = useState(null)
   const [players, setPlayers] = useState([])
   const [balance, setBalance] = useState<number>(0)
@@ -17,36 +17,42 @@ export default function Home() {
 
   useEffect(() => {
 
-    const fetch = async () => {
-      try {
-        const [m, player, accountBalance, userAccount] = await Promise.allSettled([lottery.methods.manager().call(), lottery.methods.returnEntries().call(), web3.eth.getBalance(lottery.options.address!), web3.eth.getAccounts()])
+    if (contract && web3) {
+      const fetch = async () => {
+        try {
+          const [m, player, accountBalance, userAccount] = await Promise.allSettled([contract.methods.manager().call(), contract.methods.returnEntries().call(), web3.eth.getBalance(contract.options.address!), web3.eth.getAccounts()])
 
-        if (m.status === "fulfilled" && player.status === "fulfilled" && accountBalance.status === "fulfilled" && userAccount.status === "fulfilled") {
+          if (m.status === "fulfilled" && player.status === "fulfilled" && accountBalance.status === "fulfilled" && userAccount.status === "fulfilled") {
 
-          setAccounts(userAccount.value[0])
+            setAccounts(userAccount.value[0])
+            setPlayers(player.value)
 
-          // @ts-expect-error: Type error
-          setPlayers(player.value)
+            // @ts-expect-error: Type error
+            setBalance(accountBalance.value)
 
-          // @ts-expect-error: Type error
-          setBalance(accountBalance.value)
+            if (typeof m.value === "string") {
+              // @ts-expect-error: Type error
 
-          if (typeof m.value === "string") {
-            setManager(m.value)
+              setManager(m.value)
+            }
           }
+
+
+        } catch (error) {
+          console.error("Error fetching manager:", error);
         }
-
-
-      } catch (error) {
-        console.error("Error fetching manager:", error);
       }
-    }
 
-    fetch()
-  }, [])
+      fetch()
+    }
+  }, [contract, web3])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (!web3) {
+      return
+    }
 
     if (!ether) {
       alert("Please some value")
@@ -54,13 +60,12 @@ export default function Home() {
     }
 
 
-    const accounts = await web3.eth.getAccounts()
+    const accounts = await web3!.eth.getAccounts()
 
     setMessage("Waiting on transaction success...")
 
     try {
-
-      await lottery.methods.enter().send({
+      await contract.methods.enter().send({
         from: accounts[0],
         value: web3.utils.toWei(ether, "ether")
       })
@@ -74,17 +79,19 @@ export default function Home() {
   }
 
   const pickAWinner = async () => {
-    const accounts = await web3.eth.getAccounts()
+    if (web3) {
+      const accounts = await web3.eth.getAccounts()
+      const lottery = new web3.eth.Contract(abi, address)
+      try {
+        await lottery.methods.pickRandomWinner().send({
+          from: accounts[0],
+        })
 
-    try {
-      await lottery.methods.pickRandomWinner().send({
-        from: accounts[0],
-      })
+        setMessage("A winner has been picked")
+      } catch (error) {
+        console.log(error);
 
-      setMessage("A winner has been picked")
-    } catch (error) {
-      console.log(error);
-
+      }
     }
   }
 
@@ -93,7 +100,7 @@ export default function Home() {
       <h1 className="text-2xl font-semibold">Welcome to the Lottery Game </h1>
       {manager && <p className="text-sm text-gray-500">This contract was deployed by {manager}</p>}
 
-      <p className="text-gray-500">There are currently  {players.length} people entered, competing to win {web3.utils.fromWei(balance!, "ether")} ether</p>
+      {web3 && <p className="text-gray-500">There are currently  {players.length} people entered, competing to win {web3.utils.fromWei(balance!, "ether")} ether</p>}
 
       <div className="pt-10">
         <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
