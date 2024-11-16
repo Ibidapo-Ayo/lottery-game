@@ -24,10 +24,11 @@ export default function Home() {
         if (m.status === "fulfilled" && player.status === "fulfilled" && accountBalance.status === "fulfilled" && userAccount.status === "fulfilled") {
 
           setAccounts(userAccount.value[0])
-          // @ts-ignore
+          
+          // @ts-expect-error
           setPlayers(player.value)
 
-          // @ts-ignore
+          // @ts-expect-error
           setBalance(accountBalance.value)
 
           if (typeof m.value === "string") {
