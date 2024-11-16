@@ -1,6 +1,6 @@
 "use client"
 import { abi, address } from '@/utils/lottery';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Web3 from 'web3';
 
 const useLottery = () => {
