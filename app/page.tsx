@@ -9,23 +9,32 @@ export default function Home() {
 
   const [manager, setManager] = useState(null)
   const [players, setPlayers] = useState([])
-  const [balance, setBalance] = useState(0)
+  const [balance, setBalance] = useState<number>(0)
 
   const [ether, setEther] = useState("")
   const [message, setMessage] = useState("")
+  const [accounts, setAccounts] = useState<string>("")
 
   useEffect(() => {
 
     const fetch = async () => {
       try {
-        const [m, player, accountBalance] = await Promise.allSettled([lottery.methods.manager().call(), lottery.methods.returnEntries().call(), web3.eth.getBalance(lottery.options.address!)])
+        const [m, player, accountBalance, userAccount] = await Promise.allSettled([lottery.methods.manager().call(), lottery.methods.returnEntries().call(), web3.eth.getBalance(lottery.options.address!), web3.eth.getAccounts()])
 
+        if (m.status === "fulfilled" && player.status === "fulfilled" && accountBalance.status === "fulfilled" && userAccount.status === "fulfilled") {
 
-        setPlayers(player.value)
-        setBalance(accountBalance.value)
-        if (typeof m.value === "string") {
-          setManager(m.value)
+          setAccounts(userAccount.value[0])
+          // @ts-ignore
+          setPlayers(player.value)
+
+          // @ts-ignore
+          setBalance(accountBalance.value)
+
+          if (typeof m.value === "string") {
+            setManager(m.value)
+          }
         }
+
 
       } catch (error) {
         console.error("Error fetching manager:", error);
@@ -43,11 +52,11 @@ export default function Home() {
       return
     }
 
+
     const accounts = await web3.eth.getAccounts()
 
     setMessage("Waiting on transaction success...")
-    console.log(accounts);
-    
+
     try {
 
       await lottery.methods.enter().send({
@@ -61,11 +70,21 @@ export default function Home() {
         setMessage(error.message.split(":")[2])
       }
     }
+  }
 
+  const pickAWinner = async () => {
+    const accounts = await web3.eth.getAccounts()
 
+    try {
+      await lottery.methods.pickRandomWinner().send({
+        from: accounts[0],
+      })
 
- 
+      setMessage("A winner has been picked")
+    } catch (error) {
+      console.log(error);
 
+    }
   }
 
   return (
@@ -73,7 +92,7 @@ export default function Home() {
       <h1 className="text-2xl font-semibold">Welcome to the Lottery Game </h1>
       {manager && <p className="text-sm text-gray-500">This contract was deployed by {manager}</p>}
 
-      <p className="text-gray-500">There are currently  {players.length} people entered, competing to win {web3.utils.fromWei(balance, "ether")} ether</p>
+      <p className="text-gray-500">There are currently  {players.length} people entered, competing to win {web3.utils.fromWei(balance!, "ether")} ether</p>
 
       <div className="pt-10">
         <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
@@ -84,8 +103,18 @@ export default function Home() {
           </div>
 
           <button className="bg-amber-500 font-medium px-5 py-2 rounded-md" type="submit">Enter</button>
-          {message && <p>{message}</p>}
+
         </form>
+
+
+        {manager === accounts && (
+          <div className="space-y-3 pt-10">
+            <h3>You are the manager, then you can pick a winner</h3>
+            <button className="bg-amber-500 font-medium px-5 py-2 rounded-md" type="button" onClick={pickAWinner}>Pick a winner</button>
+          </div>
+        )}
+
+        {message && <p>{message}</p>}
       </div>
     </div>
   );
