@@ -51,12 +51,12 @@ export default function Home() {
 
       <div className="">
         <h1 className="text-xl text-white tracking-tight font-semibold">Lottery will end in:</h1>
-        <LotteryEndTimer targetDate='2024-11-18T09:28:25.195Z' />
+        <LotteryEndTimer targetDate={lotterEndTime} />
       </div>
 
       {userIsAdmin && (
         <div className="pt-10">
-          <Button variant={"ghost"} size={"lg"} className='rounded-full  bg-gradient-to-r from-pink-500 to-violet-500' onClick={pickAWinner} disabled={lotterEndTime > String(Date.now())}>Pick a winner</Button>
+          <Button variant={"ghost"} size={"lg"} className='rounded-full  bg-gradient-to-r from-pink-500 to-violet-500' onClick={pickAWinner} disabled={new Date(lotterEndTime).getTime() > Date.now()}>Pick a winner</Button>
         </div>
       )}
     </div>

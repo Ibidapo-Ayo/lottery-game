@@ -5,4 +5,4 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const lotterEndTime = "2024-11-18T09:28:25.195Z"
+export const lotterEndTime = "2024-11-18T09:36:14.814Z"

@@ -25,9 +25,16 @@ const LotteryContextProvider = (
   const [web3, setWeb3] = useState<Web3 | null>(null)
   const [contract, setContract] = useState<any>(null)
 
-  const [userIsLoggedin, setUserIsLoggedIn] = useState(sessionStorage.getItem("userIsSignedIn"))
+  const [userIsLoggedin, setUserIsLoggedIn] = useState<string | null>("")
 
   useEffect(() => {
+
+    if (userIsLoggedin === "false" || !userIsLoggedin) {
+      if (typeof window !== "undefined") {
+        setUserIsLoggedIn(sessionStorage.getItem("userIsSignedIn"))
+      }
+    }
+
     if (userIsLoggedin === "true") {
       const web3Instance = new Web3(window.ethereum);
       setWeb3(web3Instance)
