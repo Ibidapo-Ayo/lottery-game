@@ -43,11 +43,11 @@ const Lottery = ({ setUserIsAdmin }: LotteryProps) => {
     return (
         <div className="w-full flex flex-col justify-center space-y-5">
             <div className="space-y-2">
-                <h2 className="text-xl bg-clip-text text-center md:text-end  bg-gradient-to-r from-pink-500 to-violet-500 text-transparent font-bold tracking-tight">Participants:</h2>
+                <h2 className="text-xl bg-clip-text text-center md:text-end text-white">Participants:</h2>
                 <h1 className="text-5xl font-bold text-white text-center md:text-end tracking-tight">{players ? players.length : 0}</h1>
             </div>
             <div className="space-y-2">
-                <h2 className="text-3xl bg-clip-text text-center md:text-end  bg-gradient-to-r from-pink-500 to-violet-500 text-transparent font-bold tracking-tight">Stand a chance to win</h2>
+                <h2 className="text-3xl bg-clip-text text-center md:text-end text-white">Stand a chance to win</h2>
                 <h1 className="text-7xl font-bold text-white text-center md:text-end tracking-tight">{web3?.utils.fromWei(balance!, "ether")} sepoliaEth</h1>
             </div>
         </div>
