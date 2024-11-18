@@ -7,7 +7,6 @@ import Lottery from "@/components/Lottery";
 import LotteryEndTimer from "@/components/LotteryEndTimer";
 import { Button } from "@/components/ui/button";
 import { LotteryContext } from "@/hooks/LotteryContext";
-import { lotterEndTime } from "@/lib/utils";
 import Link from "next/link";
 import { useContext, useState } from "react";
 
@@ -49,14 +48,9 @@ export default function Home() {
         {userIsLoggedin === "true" && <Lottery setUserIsAdmin={setUserIsAdmin} />}
       </div>
 
-      <div className="">
-        <h1 className="text-xl text-white tracking-tight font-semibold">Lottery will end in:</h1>
-        <LotteryEndTimer targetDate={lotterEndTime} />
-      </div>
-
       {userIsAdmin && (
         <div className="pt-10">
-          <Button variant={"ghost"} size={"lg"} className='rounded-full  bg-gradient-to-r from-pink-500 to-violet-500' onClick={pickAWinner} disabled={new Date(lotterEndTime).getTime() > Date.now()}>Pick a winner</Button>
+          <Button variant={"ghost"} size={"lg"} className='rounded-full  bg-gradient-to-r from-pink-500 to-violet-500' onClick={pickAWinner}>Pick a winner</Button>
         </div>
       )}
     </div>
