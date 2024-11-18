@@ -43,7 +43,7 @@ export default function Home() {
         <p className="text-white tracking-tight text-sm">Contract address: <Link href="https://sepolia.etherscan.io/address/0xfcbD2274f7c23Add5E54b5750602b6dD0946Ef01" target="_blank" className="underline">0xfcbD2274f7c23Add5E54b5750602b6dD0946Ef01</Link></p>
       </div>
 
-      <div className=" flex flex-col md:flex-row justify-between items-center gap-20">
+      <div className=" flex flex-col lg:flex-row justify-between items-center gap-20">
         {userIsLoggedin === "true" ? <EnterLottery /> : <ConnectWalletUI />}
 
         {userIsLoggedin === "true" && <Lottery setUserIsAdmin={setUserIsAdmin} />}
