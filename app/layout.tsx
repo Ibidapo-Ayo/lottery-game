@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import LotteryContextProvider from "@/hooks/LotteryContext";
 
 
 const fontSans = Plus_Jakarta_Sans({
@@ -27,9 +28,11 @@ export default function RootLayout({
       <body
         className={`antialiased gradient-bg-welcome relative min-h-screen  ${fontSans.variable}`}
       >
-        <div className="bg-[#000000a8] w-full absolute top-0 h-full -z-10"></div>
-        <Header />
-        {children}
+        <LotteryContextProvider>
+          <div className="bg-[#000000a8] w-full absolute top-0 h-full -z-10"></div>
+          <Header />
+          {children}
+        </LotteryContextProvider>
       </body>
     </html>
   );
