@@ -1,8 +1,11 @@
 
 
 "use client"
+import ConnectWalletBtn from "@/components/ConnectWalletBtn";
+import ConnectWalletUI from "@/components/ConnectWalletUI";
 import useLottery from "@/hooks/useLottery";
 import { abi, address } from "@/utils/lottery";
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 
 export default function Home() {
@@ -23,6 +26,7 @@ export default function Home() {
           const [m, player, accountBalance, userAccount] = await Promise.allSettled([contract.methods.manager().call(), contract.methods.returnEntries().call(), web3.eth.getBalance(contract.options.address!), web3.eth.getAccounts()])
 
           if (m.status === "fulfilled" && player.status === "fulfilled" && accountBalance.status === "fulfilled" && userAccount.status === "fulfilled") {
+            console.log(userAccount.value);
 
             setAccounts(userAccount.value[0])
             setPlayers(player.value)
@@ -96,34 +100,11 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-screen pt-10">
-      <h1 className="text-2xl font-semibold">Welcome to the Lottery Game </h1>
-      {manager && <p className="text-sm text-gray-500">This contract was deployed by {manager}</p>}
-
-      {web3 && <p className="text-gray-500">There are currently  {players.length} people entered, competing to win {web3.utils.fromWei(balance!, "ether")} ether</p>}
-
-      <div className="pt-10">
-        <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
-          <h4>Want to try your luck?</h4>
-          <div className="flex flex-col space-y-2">
-            <label>Amount of ether  to enter</label>
-            <input className="bg-gray-100 p-3 rounded-md border-none hover:border-none outline-none hover:outline-none " type="text" value={ether} onChange={(e) => setEther(e.target.value)} />
-          </div>
-
-          <button className="bg-amber-500 font-medium px-5 py-2 rounded-md" type="submit">Enter</button>
-
-        </form>
-
-
-        {manager === accounts && (
-          <div className="space-y-3 pt-10">
-            <h3>You are the manager, then you can pick a winner</h3>
-            <button className="bg-amber-500 font-medium px-5 py-2 rounded-md" type="button" onClick={pickAWinner}>Pick a winner</button>
-          </div>
-        )}
-
-        {message && <p>{message}</p>}
+    <div className="max-w-7xl mx-auto md:pt-20 pt-10 z-20 md:px-0 px-5 space-y-6">
+      <div>
+        <p className="text-white tracking-tight text-sm">Contract address: <Link href="https://sepolia.etherscan.io/address/0xfcbD2274f7c23Add5E54b5750602b6dD0946Ef01" target="_blank" className="underline">0xfcbD2274f7c23Add5E54b5750602b6dD0946Ef01</Link></p>
       </div>
+      <ConnectWalletUI />
     </div>
   );
 }

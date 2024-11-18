@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header";
 
 
-const fontSans = Inter({
+const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans"
@@ -24,8 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`antialiased max-w-4xl mx-auto md:px-0 px-5 ${ fontSans.variable}`}
+        className={`antialiased gradient-bg-welcome relative min-h-screen  ${fontSans.variable}`}
       >
+        <div className="bg-[#000000a8] w-full absolute top-0 h-full -z-10"></div>
+        <Header />
         {children}
       </body>
     </html>
