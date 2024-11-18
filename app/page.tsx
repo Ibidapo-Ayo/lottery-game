@@ -4,7 +4,6 @@
 import ConnectWalletUI from "@/components/ConnectWalletUI";
 import EnterLottery from "@/components/EnterLottery";
 import Lottery from "@/components/Lottery";
-import LotteryEndTimer from "@/components/LotteryEndTimer";
 import { Button } from "@/components/ui/button";
 import { LotteryContext } from "@/hooks/LotteryContext";
 import Link from "next/link";
