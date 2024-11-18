@@ -3,6 +3,7 @@ import React, { FormEvent, useState } from 'react'
 import { Button } from '../ui/button'
 import Web3 from 'web3'
 import { abi, address } from '@/utils/lottery'
+import { lotterEndTime } from '@/lib/utils'
 
 const LotteryForm = () => {
 
@@ -50,7 +51,7 @@ const LotteryForm = () => {
                 <input type='number' className='w-full bg-white py-2 px-3 rounded-md border-none outline-none' value={amount} onChange={(e) => setAmount(e.target.value)} />
             </div>
 
-            <Button variant={"ghost"} size={"lg"} className=' bg-gradient-to-r transition-all hover:from-violet-500 hover:to-pink-500 duration-700 from-pink-500 to-violet-500 w-full rounded-full text-white hover:text-white'>{isLoading ? "Entering the lottery" : "Enter"}</Button>
+            <Button variant={"ghost"} size={"lg"} disabled={lotterEndTime < String(Date.now())} className=' bg-gradient-to-r transition-all hover:from-violet-500 hover:to-pink-500 duration-700 from-pink-500 to-violet-500 w-full rounded-full text-white hover:text-white'>{isLoading ? "Entering the lottery" : "Enter"}</Button>
         </form>
     )
 }
